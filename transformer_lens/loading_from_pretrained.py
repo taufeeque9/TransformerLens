@@ -510,7 +510,7 @@ def get_official_model_name(model_name: str):
     return official_model_name
 
 
-def convert_hf_model_config(model_name: str, **kwargs):
+def convert_hf_model_config(model_name: str, hf_config=None, **kwargs):
     """
     Returns the model config for a HuggingFace model, converted to a dictionary
     in the HookedTransformerConfig format.
@@ -518,10 +518,12 @@ def convert_hf_model_config(model_name: str, **kwargs):
     Takes the official_model_name as an input.
     """
     # In case the user passed in an alias
-    official_model_name = get_official_model_name(model_name)
+    # official_model_name = get_official_model_name(model_name)
+    official_model_name = model_name
     # Load HuggingFace model config
     if "llama" not in official_model_name.lower():
-        hf_config = AutoConfig.from_pretrained(official_model_name, **kwargs)
+        if hf_config is None:
+            hf_config = AutoConfig.from_pretrained(official_model_name, **kwargs)
         architecture = hf_config.architectures[0]
     else:
         architecture = "LlamaForCausalLM"
